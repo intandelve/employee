@@ -27,12 +27,12 @@ class SettingsView(tb.Frame):
             if row:
                 self.user_data["email"] = row[0]
             else:
-                messagebox.showerror("Error", "User not found in database.")
+                print(f"Error: User not found in database for username: {self.username}") # Changed
                 self.user_data["email"] = ""
             cursor.close()
             conn.close()
         except Exception as e:
-            messagebox.showerror("Database Error", f"Failed to load user data:\n{e}")
+            print(f"Database Error: Failed to load user data for {self.username}. Error: {e}") # Changed
             self.user_data["email"] = ""
 
     def build_ui(self):
