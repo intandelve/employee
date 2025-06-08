@@ -3,7 +3,7 @@ from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 import os
 
-from app.config import login_user
+from EmployeeManagement.app.config import login_user
 
 
 class LoginView(tb.Frame):
