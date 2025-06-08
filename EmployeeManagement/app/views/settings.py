@@ -98,43 +98,64 @@ class SettingsView(tb.Frame):
 
     def save_profile(self):
         email = self.email_var.get().strip()
-        password = self.password_var.get()
-        confirm_password = self.confirm_password_var.get()
+        password = self.password_var.get().strip() # Added .strip()
+        confirm_password = self.confirm_password_var.get().strip() # Added .strip()
+
+        print(f"SettingsView.save_profile: Attempting to save profile for user: {self.username}")
+        print(f"SettingsView.save_profile: Email value: '{email}'")
+        print(f"SettingsView.save_profile: Password provided: {'yes' if password else 'no'}")
+        print(f"SettingsView.save_profile: Confirm password provided: {'yes' if confirm_password else 'no'}")
 
         if not email:
             messagebox.showwarning("Validation Error", "Email cannot be empty.")
             return
 
-        if password or confirm_password:
+        # Password validation logic
+        if password or confirm_password:  # This condition means user intends to set/change password
             if password != confirm_password:
                 messagebox.showwarning("Validation Error", "Passwords do not match.")
                 return
             if len(password) < 6:
-                messagebox.showwarning("Validation Error", "Password should be at least 6 characters.")
+                messagebox.showwarning("Validation Error", "Password should be at least 6 characters long.")
                 return
+            # If we reach here, password is valid and matching
+
+        # If password fields are empty, but user might only want to update email
+        # The 'if password:' check later will handle whether to update password
 
         try:
+            print(f"SettingsView.save_profile: Connecting to database...")
             conn = create_connection()
             cursor = conn.cursor()
 
             # Update email
+            print(f"SettingsView.save_profile: Updating email to '{email}' for user '{self.username}'")
             cursor.execute("UPDATE users SET email = %s WHERE username = %s", (email, self.username))
             self.user_data["email"] = email
+            print(f"SettingsView.save_profile: Email update executed.")
 
-            # Update password if provided
-            if password:
+            # Update password if provided and valid
+            if password: # This 'password' is already stripped and validated if it's not empty
+                print(f"SettingsView.save_profile: Preparing to update password for user '{self.username}'.")
                 hashed_password = hashlib.sha256(password.encode()).hexdigest()
                 cursor.execute("UPDATE users SET password = %s WHERE username = %s", (hashed_password, self.username))
+                print(f"SettingsView.save_profile: Password update SQL executed.")
+            else:
+                print(f"SettingsView.save_profile: No new password provided, skipping password update.")
 
+            print(f"SettingsView.save_profile: Committing changes to database...")
             conn.commit()
+            print(f"SettingsView.save_profile: Database commit successful.")
             cursor.close()
             conn.close()
 
             messagebox.showinfo("Success", "User profile updated successfully.")
             self.password_var.set("")
             self.confirm_password_var.set("")
+            print(f"SettingsView.save_profile: Profile save completed successfully.")
         except Exception as e:
             messagebox.showerror("Database Error", f"Failed to update profile:\n{e}")
+            print(f"SettingsView.save_profile: Error during profile save: {e}")
 
     def logout(self):
         if messagebox.askyesno("Logout", "Are you sure you want to logout?"):
