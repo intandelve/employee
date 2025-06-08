@@ -12,6 +12,7 @@ class App(tb.Window):
         super().__init__(themename="flatly")
         self.geometry("1700x900")
         self.current_view = None
+        self.current_username = None # Added
         self.show_login()
 
     def clear_view(self):
@@ -30,9 +31,10 @@ class App(tb.Window):
         self.clear_view()
         self.current_view = RegisterView(self, switch_to_login=self.show_login)
 
-    def show_dashboard(self):
+    def show_dashboard(self, username: str): # Modified signature
         self.clear_view()
-        self.current_view = DashboardView(self)  # ⬅️ Ini untuk masuk dashboard
+        self.current_username = username # Store username
+        self.current_view = DashboardView(self, username=username) # Pass username
 
 if __name__ == "__main__":
     app = App()

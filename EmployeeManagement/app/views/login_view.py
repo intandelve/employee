@@ -3,7 +3,7 @@ from ttkbootstrap.constants import *
 from PIL import Image, ImageTk
 import os
 
-from EmployeeManagement.app.config import login_user
+from app.config import login_user
 
 
 class LoginView(tb.Frame):
@@ -115,16 +115,19 @@ class LoginView(tb.Frame):
         if email == "" or email == "Email":
             self.feedback.config(text="Please enter your email")
             return
-        if password == "" or password == "Password":
+        if password == "" or password == "Password": # Assuming "Password" is placeholder
             self.feedback.config(text="Please enter your password")
             return
 
-        success, message = login_user(email, password)
+        success, result_data = login_user(email, password) # result_data is dict on success
         if success:
-            self.feedback.config(text=message, foreground="green")
-            self.switch_to_dashboard()
+            username = result_data["username"] # Extract username
+            # User_id = result_data["id"] # If needed later
+            self.feedback.config(text="Login successful!", foreground="green") # Generic success
+            self.switch_to_dashboard(username) # Pass username
         else:
-            self.feedback.config(text=message, foreground="red")
+            # result_data is an error message string here
+            self.feedback.config(text=result_data, foreground="red")
 
     def register(self):
         self.switch_to_register()
