@@ -109,7 +109,7 @@ class DashboardView(tb.Frame):
             widget.destroy()
 
         if feature_name == "Dashboard Overview":
-            self.load_view("overview", lambda parent: OverviewPage(parent, self.style))
+            self.load_view("overview", lambda parent: OverviewPage(parent, self.style, self.show_feature))
         elif feature_name == "Employee Data":
             self.load_view("employee", EmployeeView)
         elif feature_name == "Departments":
